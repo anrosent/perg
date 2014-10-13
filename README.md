@@ -6,7 +6,7 @@ Simple commandline utility to generate samples uniformly over the space of strin
 ## Example:
 We can generate a stream of fake JSON data representing people and their emails!
 ```
-$	echo '\w+\d*@\w+.com' | ./resample.py 
+$	echo '{ email: "\w+\d*@\w+.com", name: "\w+" }' | ./resample.py 
 
 { email: "TSyHofvq@iBApYEvxL.com", name: "aN" }
 { email: "NaKhJWqYrZfHxzwpPB@oqBUZhOqe.com", name: "ItfUes" }
