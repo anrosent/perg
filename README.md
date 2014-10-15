@@ -8,16 +8,16 @@ We can generate a stream of fake JSON data representing people and their emails!
 ```
 $	echo '{ email: "\w+\d*@\w+.com", name: "\w+" }' | ./resample.py 
 
-{ email: "TSyHofvq@iBApYEvxL.com", name: "aN" }
-{ email: "NaKhJWqYrZfHxzwpPB@oqBUZhOqe.com", name: "ItfUes" }
-{ email: "ynlQ@bqIk.com", name: "K" }
-{ email: "HSmxMMdgSj@KnYjrvRZE.com", name: "KtUcZJc" }
-{ email: "JnuTjZbCEy@j.com", name: "Ee" }
-{ email: "mJGXNzjeBYSBzQ@LPIVpH.com", name: "dpSg" }
-{ email: "lHWGvJVLrZaWM@OebmnGZPF.com", name: "mjHEyXqfp" }
-{ email: "lbzyh@RE.com", name: "BgtdG" }
-{ email: "jNYcjkMXaiiH@sOf.com", name: "k" }
-{ email: "RKpNWVxDMwh@sEHvPk.com", name: "adq" }
+{ email: "cT90@EySKdD.com", name: "h" }
+{ email: "ftfgEbIwBA0347958@EmBgmDtoL.com", name: "eIbTwd" }
+{ email: "TgRATh747@HKQsiu.com", name: "UEmtWLK" }
+{ email: "iVI89633@DQPH.com", name: "RGcZ" }
+{ email: "CAddUKBd780717279@PCVmkuEgt.com", name: "SBvkcrOUf" }
+{ email: "nyNmatC3243374846@vPr.com", name: "NRUtPXu" }
+{ email: "cEryY8@gIs.com", name: "xPpifmJ" }
+{ email: "WJkYLKt9335272938@moz.com", name: "IGspfNufnm" }
+{ email: "vFIsqS546266261@GyijjP.com", name: "s" }
+{ email: "yH3336054@yyggKBo.com", name: "XpqZ" }
 
 ```
 
