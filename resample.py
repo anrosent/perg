@@ -1,169 +1,120 @@
 #!/usr/bin/env python3
+#
+# RESAMPLE.py: Generates a stream of strings (roughly) uniformly sampled
+# from the set of strings matching a given regex
+#
+# anrosent (anson.rosenthal@gmail.com)
 
-import sys, fileinput
-from string import ascii_letters, digits
+import sys, string
 from random import randint, choice
+from re import sre_parse
 
-#TODO exp distribution on unbounded repitition
-#TODO OR
-#TODO ANY
-#TODO {n}, {n,m} repitition
+# Parse the regex so we can traverse the tree
+def parse(s):
+    return sre_parse.parse(s)
+
+# Predefined character categories
+CATEGORIES = { 'category_digit' : string.digits, 'category_word': string.ascii_letters + string.punctuation }
+
+# Sampler function in case we run into an unknown type tag
+UNK = lambda x: ''
 
 
-class Regex_AST(object):
+
+# Component Sampler functions
+
+# Trival sample from literally matching strings
+def sample_literal(x): return chr(x)
+
+# Sample from on of the predefined character categories
+def sample_category(c):
+    return choice(CATEGORIES[c])
+
+# Sample from a range of ASCII values 
+# e.g. a-z, A-Z, 0-9
+def sample_range(rg):
+    s, e = rg
+    return chr(randint(s, e))
+
+# Sample from one of the regexes in the matching set
+def sample_branch(bs):
+    return sample(choice(bs))
+
+# Sample from the set of matching characters 
+def sample_in(opts):
+    return sample_single(choice(opts))
+
+
+# Sample bounded repititions of given regex
+#FIXME: geometric dist for big max repeat
+def sample_max_repeat(node):
+
+    # Unpack start, end of repitition interval and regex to repeat
+    s, e, d = node
+    return ''.join(sample(d) for _ in range(randint(s, min(e, 25))))
+
+# NOTE: considered equivalent to sampling from greedy repeat matcher.
+# May or may not be completely equivalent
+def sample_min_repeat(node):
+    return sample_max_repeat(node)
+
+# Match any character
+def sample_any(d):
+    return choice(string.printable)
+
+# FIXME: subpatterns only used for grouping now - no lookahead or negative matching
+def sample_subpattern(p):
+    t, d = p
+    return sample(d)
+
+
+# Mapping from regex node type tag to sampler function
+SAMPLERS = {                                \
+        "literal"    : sample_literal,      \
+        "branch"     : sample_branch,       \
+        "in"         : sample_in,           \
+        "range"      : sample_range,        \
+        "category"   : sample_category,     \
+        "max_repeat" : sample_max_repeat ,      \
+        "any"        : sample_any,          \
+        "subpattern" : sample_subpattern,   \
+        "min_repeat" : sample_min_repeat
+}
+
+# Recursive Sampling functions 
+
+# Sample a single node in the regex
+def sample_single(node):
+
+    # Unpack node type and data
+    t, data = node
+
+    # Use sampler specified by node type on data
+    return SAMPLERS.get(t, UNK)(data)
+
+# Generates one sample from the uniform distribution on the set of strings matching
+# the regex whose parse tree is given as argument
+def sample(parsed):
+    return ''.join(map(sample_single, parsed))
+
+
+
+# A generator of roughly uniform samples from the set of strings matching the regex
+# NOTE: haven't proven to myself that output is actually uniform in all cases, 
+# i.e. whether the entire set is actually generable, so I'll say roughly for now.
+def sampler(s):
+    tree = parse(s)
+    while True:
+        yield sample(tree)
     
-    def __init__(self, nodes):
-        self.nodes = nodes
-
-    def __str__(self):
-        return str(self.nodes)
-
-    def sampler(self):
-        while True:
-            yield ''.join(node.generate() for node in self.nodes)
-
-class Regex_Node(object):
-    
-    def __str__(self):
-        return "%s,%s:<%s>"%(self.name, self.params, self.body)
-
-    def __repr__(self):
-        return self.__str__()
-
-    def generate(self):
-        return ''.join(node.generate() for node in self.body)
-
-class Multiple(Regex_Node):
-    name = "Multiple"
-
-    def __init__(self, params, node):
-        self.params = params
-        self.body = node
-
-# TODO: give descriptive pattern name
-class Star(Multiple):
-    
-    def __init__(self, node):
-        super(Regex_Node)
-        self.params = '*'
-        self.body = node
-
-    def generate(self,max_n=10):
-        n = randint(0,max_n)
-        return ''.join(self.body.generate() for i in range(n))
-
-# TODO: give descriptive pattern name
-class Plus(Multiple):
-    
-    def __init__(self, node):
-        super(Regex_Node)
-        self.params = '+'
-        self.body = node
-    
-    def generate(self,max_n=10):
-        n = randint(1,max_n)
-        return ''.join(self.body.generate() for i in range(n))
-
-class Maybe(Multiple):
-    
-    def __init__(self, node):
-        super(Regex_Node)
-        self.params = "?"
-        self.body = node
-
-    def generate(self):
-        if choice([0,1]):
-            return self.body.generate()
-        else:
-            return ''
-
-# TODO: isn't parsed yet
-class N_repeat(Multiple):
-    
-    def __init__(self, n, node):
-        super(Regex_Node)
-        self.params = '{%s}'%n
-        self.body = [node]
-
-# TODO: isn't parsed yet
-class Range(Multiple):
-    
-    def __init__(self, n, m, node):
-        super(Regex_Node)
-        self.params = '{%s,%m}'%(n,m)
-        self.body = [node]
-
-class String(Regex_Node):
-    params = ''
-
-    def __init__(self, alphabet):
-        super(Regex_Node)
-        self.name = "String"
-        self.alphabet = alphabet
-        self.body = alphabet
-
-    def  __repr__(self):
-        return "String:%s"%self.alphabet
-
-    def generate(self):
-        return choice(self.alphabet)
-
-class ParseError(Exception):
-    
-    def __init__(self, c, i):
-        super("error at index %s, char %s"%(i,c))
-
-keywords = {
-            '*':Star,
-            '+':Plus,
-            '?':Maybe
-           }
-
-
-# TODO: super jank, do this the right way
-def parse_regex(rgx):
-    text = ''
-    posn = 0
-    nodes = []
-    stream = enumerate(rgx)
-    for i, c in stream:
-        if c in keywords:
-            if text:
-                if len(text) > 2:
-                    nodes.append(String(text[:-1]))
-                node = String([text[-1]])
-                node = keywords[c](node)
-                text = ''
-                nodes.append(node)
-            elif nodes:
-                nodes[-1] = keywords[c](nodes[-1])
-            else:
-                raise ParseError(c, i)
-        else:
-            if c == '\\':
-                if text:
-                    nodes.append(String([text]))
-                    text = ''
-                ix, c2 = stream.__next__()
-                if c2 == 'd':
-                    nodes.append(String(list(digits)))
-                elif c2 == 'w':
-                    nodes.append(String(list(ascii_letters)))
-                text = ''
-            else:
-                text += c
-    if text:
-        nodes.append(String([text]))
-    return Regex_AST(nodes)
-
-
-# TODO: better cmdline usage, with:
-#   - # samples parameter
-#   - pass in pattern via stdin, file arg, or literal arg
-
+# TODO: better CLI
 if __name__ == '__main__':  
-    line = ''.join(fileinput.input()).strip()
-    re_ast = parse_regex(line)
-    sampler = re_ast.sampler()
-    for i in range(10):
-        print(sampler.__next__())
+    # Get regex to sample from as 1st arg
+    regex = sys.argv[1].replace('\\\\', '\\') 
+
+    # Make sample generator and sample forever
+    my_sampler = sampler(regex)
+
+    # TODO: add -n flag
+    for _ in range(10):
+        print(next(my_sampler))
