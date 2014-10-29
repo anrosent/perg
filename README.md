@@ -24,9 +24,6 @@ $	echo '{ email: "\w+\d*@\w+.com", name: "\w+" }' | ./resample.py
 ## Soon
 Lots of TODOs here.
 
- - Sampling ```*``` patterns from a geometric distribution rather than a uniform over a fixed number of repititions (default is 10)
- - Fixed and range repitition patterns ```{m[,n]}```
- - Or ```|``` patterns
- - Any ```[]``` patterns
- - Grouping with ```()```
- - Better commandline usability
+    - Better commandline interface
+    - Add proper sampling for the many subpattern ```(?``` variants
+    - Add geometric sampling over ranges for ```*``` and ```+``` repeats
