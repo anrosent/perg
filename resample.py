@@ -20,7 +20,6 @@ CATEGORIES = { 'category_digit' : string.digits, 'category_word': string.ascii_l
 UNK = lambda x: ''
 
 
-
 # Component Sampler functions
 
 # Trival sample from literally matching strings
@@ -38,7 +37,8 @@ def sample_range(rg):
 
 # Sample from one of the regexes in the matching set
 def sample_branch(bs):
-    return sample(choice(bs))
+    _, d = bs
+    return sample(choice(d))
 
 # Sample from the set of matching characters 
 def sample_in(opts):
