@@ -23,7 +23,6 @@ $	echo '{ email: "\w+\d*@\w+.com", name: "\w+" }' | ./resample.py
 
 ## Soon
 Lots of TODOs here.
-
     - Better commandline interface
     - Add proper sampling for the many subpattern ```(?``` variants
     - Add geometric sampling over ranges for ```*``` and ```+``` repeats
