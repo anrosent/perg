@@ -14,7 +14,7 @@ def parse(s):
     return sre_parse.parse(s)
 
 # Predefined character categories
-CATEGORIES = { 'category_digit' : string.digits, 'category_word': string.ascii_letters + string.punctuation }
+CATEGORIES = { 'category_digit' : string.digits, 'category_word': string.ascii_letters }
 
 # Sampler function in case we run into an unknown type tag
 UNK = lambda x: ''
