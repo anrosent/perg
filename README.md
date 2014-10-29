@@ -6,23 +6,23 @@ Simple commandline utility to generate samples uniformly over the space of strin
 ## Example:
 We can generate a stream of fake JSON data representing people and their emails!
 ```
-$	echo '{ email: "\w+\d*@\w+.com", name: "\w+" }' | ./resample.py 
+$	./resample.py '{ email: "\w+\d*@\w+\.(com|edu|org)", name: "\w+" }' 
 
-{ email: "cT90@EySKdD.com", name: "h" }
-{ email: "ftfgEbIwBA0347958@EmBgmDtoL.com", name: "eIbTwd" }
-{ email: "TgRATh747@HKQsiu.com", name: "UEmtWLK" }
-{ email: "iVI89633@DQPH.com", name: "RGcZ" }
-{ email: "CAddUKBd780717279@PCVmkuEgt.com", name: "SBvkcrOUf" }
-{ email: "nyNmatC3243374846@vPr.com", name: "NRUtPXu" }
-{ email: "cEryY8@gIs.com", name: "xPpifmJ" }
-{ email: "WJkYLKt9335272938@moz.com", name: "IGspfNufnm" }
-{ email: "vFIsqS546266261@GyijjP.com", name: "s" }
-{ email: "yH3336054@yyggKBo.com", name: "XpqZ" }
+{ email: "t@ltfiSrdbsufNCGEn.com", name: "Bm Gsiclruqqmoqcoshafggffnzbq" }
+{ email: "ZAfBiJzQMmnvwuh@Tlh.com", name: "Oo Uhcapep" }
+{ email: "dgXvFRVeBnxjqmcp@uppie.edu", name: "Vpcamqvkmemrdmt Mmwuclzqsecmoce" }
+{ email: "xfPySMslEzdYgx@xIVkXYpc.org", name: "Welugkwrm Isecvrimkseem" }
+{ email: "rbRblIQoT@mQgESyvwO.com", name: "Bbsh Jhmmjpwljdgb" }
+{ email: "seMxENYfDCV@yJQPjiNJt.org", name: "Dkwpriliosfgcky Hguixmfcovq" }
+{ email: "VfKyFwQFDTwcSm@wgMtb.org", name: "Kxebp Jnacpdwsslwwzgsfskrj" }
+{ email: "VyCkUHhEkALWsVz@vOsgKBJesbB.com", name: "Gjkpzreyw Turri" }
+{ email: "cBOP@KaGxv.org", name: "Zjpphghjxosufhjwyoq Qfuyqeakqbppww" }
+{ email: "pFpGbEvrljEbZ@pknRANquxDcUz.com", name: "Xvqmkdkryb Eyuts" }
+
 
 ```
 
 ## Soon
-Lots of TODOs here.
-    - Better commandline interface
-    - Add proper sampling for the many subpattern ```(?``` variants
-    - Add geometric sampling over ranges for ```*``` and ```+``` repeats
+- Better commandline interface
+- Add proper sampling for the many subpattern ```(?``` variants (backreferences most important)
+- Add geometric sampling over integers for ```*``` and ```+``` repeats instead of uniform over smaller range
