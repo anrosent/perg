@@ -14,6 +14,7 @@ def parse(s):
     return sre_parse.parse(s)
 
 # Predefined character categories
+# TODO: add 'category_not_XXX' support
 CATEGORIES = { 'category_digit' : string.digits, 'category_word': string.ascii_letters }
 
 # Sampler function in case we run into an unknown type tag
