@@ -24,5 +24,4 @@ $	./resample.py '{ email: "\w+\d*@\w+\.(com|edu|org)", name: "\w+" }'
 
 ## Soon
 - Better commandline interface
-- Add proper sampling for the many subpattern ```(?``` variants (backreferences most important)
 - Add geometric sampling over integers for ```*``` and ```+``` repeats instead of uniform over smaller range
