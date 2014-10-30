@@ -6,22 +6,22 @@ Simple commandline utility to generate samples uniformly over the space of strin
 ## Example:
 We can generate a stream of fake JSON data representing people and their emails!
 ```
-$	./resample.py '{ email: "\w+\d*@\w+\.(com|edu|org)", name: "\w+" }' 
+$	./resample.py ./resample.py '{ "name":"(\w+) (\w+)", "email": "\1_\2@\w+.(edu|com|org)"}'
 
-{ email: "t@ltfiSrdbsufNCGEn.com", name: "Bm Gsiclruqqmoqcoshafggffnzbq" }
-{ email: "ZAfBiJzQMmnvwuh@Tlh.com", name: "Oo Uhcapep" }
-{ email: "dgXvFRVeBnxjqmcp@uppie.edu", name: "Vpcamqvkmemrdmt Mmwuclzqsecmoce" }
-{ email: "xfPySMslEzdYgx@xIVkXYpc.org", name: "Welugkwrm Isecvrimkseem" }
-{ email: "rbRblIQoT@mQgESyvwO.com", name: "Bbsh Jhmmjpwljdgb" }
-{ email: "seMxENYfDCV@yJQPjiNJt.org", name: "Dkwpriliosfgcky Hguixmfcovq" }
-{ email: "VfKyFwQFDTwcSm@wgMtb.org", name: "Kxebp Jnacpdwsslwwzgsfskrj" }
-{ email: "VyCkUHhEkALWsVz@vOsgKBJesbB.com", name: "Gjkpzreyw Turri" }
-{ email: "cBOP@KaGxv.org", name: "Zjpphghjxosufhjwyoq Qfuyqeakqbppww" }
-{ email: "pFpGbEvrljEbZ@pknRANquxDcUz.com", name: "Xvqmkdkryb Eyuts" }
+{ "name":"R TWER", "email": "R_TWER@PVRcyR)com"}
+{ "name":"mwGwTOWKRXs GIGY", "email": "mwGwTOWKRXs_GIGY@FvERutwS]org"}
+{ "name":"igUMTrViMt oTkFPAySfn", "email": "igUMTrViMt_oTkFPAySfn@kQekedu"}
+{ "name":"MtvMHGBi R", "email": "MtvMHGBi_R@UCPbGDjJai&com"}
+{ "name":"fbMyddFkTRP QeH", "email": "fbMyddFkTRP_QeH@ekmjacom"}
+{ "name":"vO devQkFbORdi", "email": "vO_devQkFbORdi@LaAPfnmMcnTZlYorg"}
+{ "name":"khT BoWvCONzyeOYoNgasncZnU", "email": "khT_BoWvCONzyeOYoNgasncZnU@kV-com"}
+{ "name":"TmEU TvjeB", "email": "TmEU_TvjeB@pMMnvdcom"}
+{ "name":"rzjoN jkpSd", "email": "rzjoN_jkpSd@qTLvRUedu"}
+{ "name":"pgzQ fz", "email": "pgzQ_fz@Shtedu"}
+
 
 
 ```
 
 ## Soon
 - Better commandline interface
-- Add geometric sampling over integers for ```*``` and ```+``` repeats instead of uniform over smaller range
