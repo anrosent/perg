@@ -62,11 +62,23 @@ def sample_min_repeat(node):
 def sample_any(d):
     return choice(string.printable)
 
-# FIXME: subpatterns only used for grouping now - no lookahead or negative matching
+# Sample from subpattern and cache for backreferences
+# FIXME: still doesn't handle assert and assert_not subpatterns
 def sample_subpattern(p):
-    t, d = p
-    return sample(d)
+    subpattern_id, d = p
+   
+    # Sample subpattern and cache
+    sampled = sample(d)
 
+    # Check if captured subpattern
+    if subpattern_id:
+        SUBPATTERNS[subpattern_id] = sampled
+
+    return sampled 
+
+# Lookup referenced group and sample from it
+def sample_groupref(ref):
+    return SUBPATTERNS[ref]
 
 # Mapping from regex node type tag to sampler function
 SAMPLERS = {                                \
@@ -78,8 +90,12 @@ SAMPLERS = {                                \
         "max_repeat" : sample_max_repeat ,      \
         "any"        : sample_any,          \
         "subpattern" : sample_subpattern,   \
-        "min_repeat" : sample_min_repeat
+        "min_repeat" : sample_min_repeat,   \
+        'groupref'   : sample_groupref
 }
+
+# Map to keep track of subpatterns we see
+SUBPATTERNS = {}
 
 # Recursive Sampling functions 
 
