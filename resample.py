@@ -5,7 +5,7 @@
 #
 # anrosent (anson.rosenthal@gmail.com)
 
-import sys, string
+import sys, string, argparse
 from random import randint, choice, random
 from re import sre_parse
 
@@ -144,14 +144,24 @@ def sampler(s):
     while True:
         yield sample(tree)
     
-# TODO: better CLI
+# Commandline execution
 if __name__ == '__main__':  
+
+    # CLI opts
+    parser = argparse.ArgumentParser(description="Generate a stream of random samples from the set of strings matching your regex")
+    parser.add_argument('regex', help='regex to sample matches from')
+    parser.add_argument('-n', help='number of matches to sample', type=int, default=0)
+
+    args = parser.parse_args()
+
     # Get regex to sample from as 1st arg
-    regex = sys.argv[1].replace('\\\\', '\\') 
+    regex = args.regex.replace('\\\\', '\\') 
 
-    # Make sample generator and sample forever
-    my_sampler = sampler(regex)
-
-    # TODO: add -n flag
-    for _ in range(10):
-        print(next(my_sampler))
+    # If no -n arg, sample forever
+    if not args.n:
+        for s in sampler(regex):
+            print(s)
+    else:
+        generator = sampler(regex)
+        for _ in range(args.n):
+            print(next(generator))

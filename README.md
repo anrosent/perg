@@ -22,6 +22,3 @@ $	./resample.py ./resample.py '{ "name":"(\w+) (\w+)", "email": "\1_\2@\w+.(edu|
 
 
 ```
-
-## Soon
-- Better commandline interface
