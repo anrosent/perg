@@ -15,6 +15,7 @@ def parse(s):
 
 # Predefined character categories
 # TODO: add 'category_not_XXX' support
+# TODO: add whitespace support
 CATEGORIES = { 'category_digit' : string.digits, 'category_word': string.ascii_letters }
 
 # Sampler function in case we run into an unknown type tag
@@ -100,19 +101,9 @@ def sample_subpattern(p):
 def sample_groupref(ref):
     return SUBPATTERNS[ref]
 
-# Mapping from regex node type tag to sampler function
-SAMPLERS = {                                \
-        "literal"    : sample_literal,      \
-        "branch"     : sample_branch,       \
-        "in"         : sample_in,           \
-        "range"      : sample_range,        \
-        "category"   : sample_category,     \
-        "max_repeat" : sample_max_repeat ,      \
-        "any"        : sample_any,          \
-        "subpattern" : sample_subpattern,   \
-        "min_repeat" : sample_min_repeat,   \
-        'groupref'   : sample_groupref
-}
+# Regex parse node names that we can sample
+SAMPLERS = {"literal", "branch", "in", "range", "category", "max_repeat", 
+            "any", "subpattern", "min_repeat", 'groupref'}
 
 # Map to keep track of subpatterns we see
 SUBPATTERNS = {}
@@ -126,7 +117,7 @@ def sample_single(node):
     t, data = node
 
     # Use sampler specified by node type on data
-    return SAMPLERS.get(t, UNK)(data)
+    return (eval("sample_%s" % t) if t in SAMPLERS else UNK)(data)
 
 # Generates one sample from the (roughly) uniform distribution on the set of strings matching
 # the regex whose parse tree is given as argument
