@@ -3,7 +3,7 @@ import os.path
 
 README = os.path.join(os.path.dirname(__file__), 'README')
 
-version = '0.1.1'
+version = '0.1.4'
 
 with open(README) as fp:
     longdesc = fp.read()
@@ -28,6 +28,7 @@ setup(name='perg',
     author_email='anson.rosenthal@gmail.com',
     license='MIT License',
     url='https://github.com/anrosent/perg.git',
-    py_modules=['perg']
+    py_modules=['perg'],
+    scripts=['perg']
 )
 
