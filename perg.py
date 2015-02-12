@@ -4,10 +4,11 @@
 # from the set of strings matching a given regex
 #
 # anrosent (anson.rosenthal@gmail.com)
-
+import pdb
 import sys, string, argparse
 from random import randint, choice, random
 from re import sre_parse
+from itertools import product, chain
 
 # Parse the regex so we can traverse the tree
 def parse(s):
@@ -38,9 +39,14 @@ def sample_geometric(p, start=0):
 # Trival sample from literally matching strings
 def sample_literal(x): return chr(x)
 
+def enum_literal(x): return chr(x)
+
 # Sample from on of the predefined character categories
 def sample_category(c):
     return choice(CATEGORIES[c])
+
+def enum_category(c):
+    return CATEGORIES[c]
 
 # Sample from a range of ASCII values 
 # e.g. a-z, A-Z, 0-9
@@ -48,15 +54,25 @@ def sample_range(rg):
     s, e = rg
     return chr(randint(s, e))
 
+def enum_range(rg):
+    s,e = rg
+    return map(chr, range(s,e))
+
 # Sample from one of the regexes in the matching set
 def sample_branch(bs):
     _, d = bs
     return sample(choice(d))
 
+def enum_branch(bs):
+    _, d = bs
+    return chain(*map(enum_gen(d)))
+
 # Sample from the set of matching characters 
 def sample_in(opts):
     return sample_single(choice(opts))
 
+def enum_in(opts):
+    return chain(*map(enum_single, opts))
 
 # Sample repitition interval for given regex
 def sample_max_repeat(node):
@@ -74,14 +90,25 @@ def sample_max_repeat(node):
 
     return ''.join(sample(d) for _ in range(repititions))
 
+def enum_max_repeat(node):
+    s, e, d = node
+    #pdb.set_trace()
+    return map(joiner, product(*(enum_gen(d) for repititions in range(s,e+1) for _ in range(repititions))))
+
 # NOTE: considered equivalent to sampling from greedy repeat matcher.
 # May or may not be completely equivalent
 def sample_min_repeat(node):
     return sample_max_repeat(node)
 
+def enum_min_repeat(node):
+    return enum_max_repeat(node)
+
 # Match any character
 def sample_any(d):
     return choice(string.printable)
+
+def enum_any(d):
+    return string.printable
 
 # Sample from subpattern and cache for backreferences
 # FIXME: still doesn't handle assert and assert_not subpatterns
@@ -97,13 +124,21 @@ def sample_subpattern(p):
 
     return sampled 
 
+def enum_subpattern(p):
+    raise NotImplementedError
+
 # Lookup referenced group and sample from it
 def sample_groupref(ref):
     return SUBPATTERNS[ref]
 
+def enum_groupref(ref):
+    raise NotImplementedError
+
 # Regex parse node names that we can sample
 SAMPLERS = {"literal", "branch", "in", "range", "category", "max_repeat", 
             "any", "subpattern", "min_repeat", 'groupref'}
+
+enum_table = {s: eval("enum_%s" % s) for s in SAMPLERS}
 
 # Map to keep track of subpatterns we see
 SUBPATTERNS = {}
@@ -119,20 +154,34 @@ def sample_single(node):
     # Use sampler specified by node type on data
     return (eval("sample_%s" % t) if t in SAMPLERS else UNK)(data)
 
+def enum_single(node):
+    #pdb.set_trace()
+    t, data = node
+    return enum_table[t](data)
+
 # Generates one sample from the (roughly) uniform distribution on the set of strings matching
 # the regex whose parse tree is given as argument
 def sample(parsed):
     return ''.join(map(sample_single, parsed))
 
+def joiner(t):
+    #pdb.set_trace()
+    return ''.join(t)
 
+def enum_gen(parsed):
+    return map(joiner, product(*list(map(enum_single, parsed))))
 
 # A generator of (roughly) uniform samples from the set of strings matching the regex
 # NOTE: This is not actually a uniform sample, for the following reasons
 #   - For 'at least n times' patterns, interval [n, inf) is sampled using a geometric distribution
 #   - Not sure whether the entire set of matches is actually generable using this scheme 
 #     for all regexes.. 
-def sampler(s):
+def sampler(s, enum=False):
     tree = parse(s)
-    while True:
-        yield sample(tree)
-    
+    if enum:
+        for f in enum_gen(tree):
+            yield f
+    else:
+        while True:
+            yield sample(tree)
+        
