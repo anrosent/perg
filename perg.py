@@ -65,7 +65,7 @@ def sample_branch(bs):
 
 def enum_branch(bs):
     _, d = bs
-    return chain(*map(enum_gen(d)))
+    return chain(*map(enum_gen, d))
 
 # Sample from the set of matching characters 
 def sample_in(opts):
@@ -93,7 +93,8 @@ def sample_max_repeat(node):
 def enum_max_repeat(node):
     s, e, d = node
     #pdb.set_trace()
-    return map(joiner, product(*(enum_gen(d) for repititions in range(s,e+1) for _ in range(repititions))))
+    matches = list(enum_gen(d))
+    return chain(*(map(joiner, product(matches, repeat=repititions)) for repititions in range(s, e+1)))
 
 # NOTE: considered equivalent to sampling from greedy repeat matcher.
 # May or may not be completely equivalent
