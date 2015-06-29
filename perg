@@ -1,7 +1,22 @@
 #!/usr/bin/env python3
 import argparse
+import perg, enum, sample
 
-import perg
+        
+# A generator of (roughly) uniform samples from the set of strings matching the regex
+# NOTE: This is not actually a uniform sample, for the following reasons
+#   - For 'at least n times' patterns, interval [n, inf) is sampled using a geometric distribution
+#   - Not sure whether the entire set of matches is actually generable using this scheme 
+#     for all regexes.. 
+def sampler(s, e=False):
+    tree = perg.parse(s)
+    if e:
+        for f in enum.enum_gen(tree):
+            yield f
+    else:
+        while True:
+            yield sample.sample(tree)
+        
 
 # Commandline execution
 if __name__ == '__main__':  
@@ -20,9 +35,9 @@ if __name__ == '__main__':
 
     # If no -n arg, sample forever
     if not args.n:
-        for s in perg.sampler(regex, enum=args.e):
+        for s in sampler(regex, e=args.e):
             print(s)
     else:
-        generator = perg.sampler(regex)
+        generator = sampler(regex)
         for _ in range(args.n):
             print(next(generator))
