@@ -10,10 +10,10 @@ with open(README) as fp:
 
 setup(name='perg',
     version=version,
-    description='Generate a stream of random samples from the set of strings matching a Perl regex',
+    description='Generate a stream of random samples from the set of strings matching a regular expression',
     long_description=longdesc,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',

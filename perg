@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # CLI opts
     parser = argparse.ArgumentParser(description="Generate a stream of random samples from the set of strings matching your regex")
     parser.add_argument('regex', help='regex to sample matches from')
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument('-n', help='number of matches to sample', type=int, default=0)
     group.add_argument('-e', help='enumerate all matches', action='store_true')
 
