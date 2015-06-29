@@ -31,7 +31,7 @@ def sample_category(c):
 # e.g. a-z, A-Z, 0-9
 def sample_range(rg):
     s, e = rg
-    return chr(randint(s, e))
+    return chr(randint(s, e+1))
 
 
 # Sample from one of the regexes in the matching set
